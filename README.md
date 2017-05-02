@@ -1,13 +1,8 @@
-# racktables-monitoring
+# Racktables monitoring plugin
 
-Monitoring Plugin for Racktables.
+This is an additional plugin for RackTables, that creates a monitoring tab right beside the object page. The plugin is based on Racktables Nagios Plugin v.0.1 from Mogilowski Sebastian <sebastian@mogilowski.net> ( http://www.mogilowski.net/projects/racktables ).
 
-This is an additional plugin for RackTables, that creates a monitoring tab right beside the 
-object page. 
-
-You can configure multiple monitoring servers (supported and tested: Nagios, Icinga) in the
-configuration tab - each one with different CSS and JavaScript URLs. The monitoring instance
-is selected via a RegEx for each object. 
+You can configure multiple monitoring servers (supported and tested: Nagios, Icinga) in the configuration tab - each one with different CSS and JavaScript URLs. The monitoring instance is selected via a RegEx for each object. 
 
 Example:
 * URL:   https://nagios.suse.de/cgi-bin/status.cgi
@@ -18,7 +13,7 @@ Example:
 * RegEx: suse.cz
 * => For Machines with a FQDN "suse.cz", the icinga.suse.cz machine will be queried.
 
-While the configuration tab allows to enter a default username and password to log in to the monitoring server, I strongly recommend to use the fallback solution and leave the fields empty.
+While the configuration tab allows to enter a default username and password to log in to the monitoring server, I strongly recommend to use the fallback solution and leave the fields empty. 
 
 A nice feature might also be the additional CSS and JavaScript URLs you can configure, which allows to customize the look and feel.
 
