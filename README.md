@@ -1,5 +1,7 @@
 # Racktables monitoring plugin
 
+! WARNING: The plugin is not ready, yet !
+
 This is an additional plugin for RackTables, that creates a monitoring tab right beside the object page. The plugin is based on Racktables Nagios Plugin v.0.1 from Mogilowski Sebastian <sebastian@mogilowski.net> ( http://www.mogilowski.net/projects/racktables ).
 
 You can configure multiple monitoring servers (supported and tested: Nagios, Icinga) in the configuration tab - each one with different CSS and JavaScript URLs. The monitoring instance is selected via a RegEx for each object. 
