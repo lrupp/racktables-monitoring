@@ -12,4 +12,13 @@ function getMonitoringServers()
         return reindexById ($result->fetchAll (PDO::FETCH_ASSOC));
 }
 
+function getMonitoringBackends()
+{
+	$result = usePreparedSelectBlade
+	(
+		'SELECT `id`, `name` FROM MonitoringBackend AS MS GROUP BY id'
+	);
+	return reindexById ($result->fetchAll (PDO::FETCH_ASSOC));
+}
+
 ?>
