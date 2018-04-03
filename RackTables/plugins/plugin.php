@@ -33,9 +33,9 @@ function plugin_monitoring_init ()
         registerOpHandler ('monitoring', 'servers', 'upd', 'tableHandler');
         $interface_requires['monitoring-*'] = 'interface-config.php';
 
-        registerHook ('dispatchImageRequest_hook', 'plugin_monitoring_dispatchImageRequest');
-        registerHook ('resetObject_hook', 'plugin_monitoring_resetObject');
-        registerHook ('resetUIConfig_hook', 'plugin_monitoring_resetUIConfig');
+//        registerHook ('dispatchImageRequest_hook', 'plugin_monitoring_dispatchImageRequest');
+//        registerHook ('resetObject_hook', 'plugin_monitoring_resetObject');
+//        registerHook ('resetUIConfig_hook', 'plugin_monitoring_resetUIConfig');
 
         $opspec_list['monitoring-servers-add'] = array
         (
@@ -96,6 +96,7 @@ function plugin_monitoring_install ()
 	"CREATE TABLE `MonitoringServer` (
         `id` int(10) unsigned NOT NULL auto_increment,
         `name` char(255),
+        `type` int(10) unsigned NOT NULL,
         `base_url` char(255),
         `css` char(255),
         `javascript` char(255),
@@ -120,7 +121,7 @@ function plugin_monitoring_install ()
 	( `id`, `name` ) VALUES 
 	( 1, 'Nagios'),
 	( 2, 'Icinga 1'),
-	( 3, 'Icinga 3'),
+	( 3, 'Icinga 2'),
 	( 4, 'Naemon'),
 	( 5, 'Shinken'),
 	( 6, 'Thruk'),
@@ -149,8 +150,7 @@ function renderMonitoringConfig()
         $columns = array
         (
                 array ('th_text' => 'Name',                'row_key' => 'name', 'td_maxlen' => 30),
-# id, name
-		array ('th_text' => 'Type', 'row_key' => 'name', printNiftySelect('other', array ('name' => '0', 'name' => '1' ), 'NULL') ),
+                array ('th_text' => 'Type',                'row_key' => 'type', 'td_maxlen' => 10),
                 array ('th_text' => 'URL to status.cgi',   'row_key' => 'base_url', 'td_escape' => FALSE, 'td_maxlen' => 150),
                 array ('th_text' => 'CSS URL',             'row_key' => 'css', 'td_maxlen' => 150),
                 array ('th_text' => 'Javascript URL',      'row_key' => 'javascript', 'td_maxlen' => 150),
@@ -176,11 +176,19 @@ function renderMonitoringServersEditor()
 {
         function printNewItemTR()
         {
+                $backends = getMonitoringBackends();
+//        echo "Backends: ".var_dump($backends)."\n";
                 printOpFormIntro ('add');
                 echo '<tr>';
                 echo '<td>' . getImageHREF ('create', 'add a new server', TRUE) . '</td>';
-                echo '<td><input type=text size='.get_name_size().' name=name></td>' .
-                     '<td><input type=text size='.get_base_url_size().' name=base_url></td>' .
+                echo '<td><input type=text size='.get_name_size().' name=name></td>';
+                echo '<td><select name=backend>';
+                for ($i = 1; $i <= count($backends) ; $i++)
+                {
+                   echo "<option value=\"$i\">".$backends[$i]['name']."</option>";
+                }
+                echo '</select></td>';
+                echo '<td><input type=text size='.get_base_url_size().' name=base_url></td>' .
                      '<td><input type=text size='.get_css_size().' name=css></td>' .
                      '<td><input type=text size='.get_javascript_size().' name=javascript></td>' .
                      '<td><input type=text size='.get_regularexp_size().' name=regularexp></td>' .
@@ -199,6 +207,7 @@ function renderMonitoringServersEditor()
         echo '<tr>' .
                 '<th>&nbsp;</th>' .
                 '<th>Name</th>' .
+                '<th>Type</th>' .
                 '<th>URL to status.cgi</th>' .
                 '<th>CSS URL</th>' .
                 '<th>Javascript URL</th>' .
@@ -212,11 +221,16 @@ function renderMonitoringServersEditor()
                 printNewItemTR();
         foreach (getMonitoringServers() as $server)
         {
+                $backends = getMonitoringBackends();
                 printOpFormIntro ('upd', array ('id' => $server['id']));
                 echo '<tr><td>';
                 echo getOpLink (array ('op' => 'del', 'id' => $server['id']), '', 'destroy', 'delete this server');
                 echo '</td>';
                 echo '<td><input type=text size='.get_name_size().' name=name value="'         . htmlspecialchars ($server['name'],       ENT_QUOTES, 'UTF-8') . '"></td>';
+                echo '<td><select name=backend>';
+                for ($i = 1; $i <= count($backends) ; $i++)
+                    echo "<option value=\"$i\">".$backends[$i]['name']."</option>";
+                echo '</select></td>';
                 echo '<td><input type=text size='.get_base_url_size().' name=base_url value="'     . htmlspecialchars ($server['base_url'],   ENT_QUOTES, 'UTF-8') . '"></td>';
                 echo '<td><input type=text size='.get_css_size().' name=css value="'          . htmlspecialchars ($server['css'],        ENT_QUOTES, 'UTF-8') . '"></td>';
                 echo '<td><input type=text size='.get_javascript_size().' name=javascript value="'   . htmlspecialchars ($server['javascript'], ENT_QUOTES, 'UTF-8') . '"></td>';
